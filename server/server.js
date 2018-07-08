@@ -19,7 +19,7 @@ var todo=new Todo({
 });
 
 todo.save().then((doc)=>{
-  
+
   res.send(doc);
 },(e)=>{
   res.status(400).send(e);
@@ -30,6 +30,8 @@ todo.save().then((doc)=>{
 app.listen(3000,()=>{
   console.log('Started on port 3000');
 });
+
+module.exports={app};
 // var newTodo= new Todo({
 //   text:'Cook Dinner'
 // });
