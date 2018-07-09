@@ -1,3 +1,4 @@
+require('./config/config');
 const _=require('lodash');
 const express=require('express');
 const bodyParser=require('body-parser');
@@ -9,7 +10,7 @@ var {Todo}=require('./models/todo');
 var {User}=require('./models/user');
 
 var app=express();
-const port=process.env.PORT || 3000;  //to deploy on Heroku, the process.env.PORT is set when running on Heroku but it is
+const port=process.env.PORT;  //to deploy on Heroku, the process.env.PORT is set when running on Heroku but it is
                                       //not set when running locally, if running locally it is set to 3000.
 
 
