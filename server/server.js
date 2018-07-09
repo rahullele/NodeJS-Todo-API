@@ -8,6 +8,9 @@ var {Todo}=require('./models/todo');
 var {User}=require('./models/user');
 
 var app=express();
+const port=process.env.PORT || 3000;  //to deploy on Heroku, the process.env.PORT is set when running on Heroku but it is
+                                      //not set when running locally, if running locally it is set to 3000.
+
 
 app.use(bodyParser.json());  //body parser converts your json data into javascript objects and attaches it to
                              //'req' in app.post()
@@ -58,8 +61,8 @@ app.get('/todos/:id',(req,res)=>{
 
 
 
-app.listen(3000,()=>{
-  console.log('Started on port 3000');
+app.listen(port,()=>{
+  console.log(`Started up at ${port}`);
 });
 
 module.exports={app};
