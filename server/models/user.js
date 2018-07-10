@@ -61,6 +61,26 @@ UserSchema.methods.generateAuthToken=function(){ //We are not using an arrow fun
 
 };
 
+UserSchema.statics.findByToken=function(token){
+
+var User=this;
+var decoded;
+
+try{
+  decoded=jwt.verify(token,'abc123');
+}catch(e){
+   // return new Promise((resolve,reject)=>{
+   //    reject();
+   // });
+   return Promise.reject(); //This statement and the above code mean the same 
+}
+return User.findOne({
+'_id':decoded._id,
+'tokens.token':token,
+'tokens.access':'auth'
+});
+};
+
 var User=mongoose.model('Users',UserSchema);
 
 module.exports={User};
