@@ -2,6 +2,7 @@ const mongoose=require('mongoose');
 const validator=require('validator');
 const jwt=require('jsonwebtoken');
 const _=require('lodash');
+const bcrypt=require('bcryptjs');
 
 var UserSchema=new mongoose.Schema(
   {
@@ -39,7 +40,7 @@ var UserSchema=new mongoose.Schema(
   }
 );
 
-UserSchema.methods.toJSON=function(){
+UserSchema.methods.toJSON=function(){  //toJSON and generateAuthToken are instance methods so these are called on .methods
 var user=this;
 var userObject=user.toObject();
 
@@ -61,7 +62,7 @@ UserSchema.methods.generateAuthToken=function(){ //We are not using an arrow fun
 
 };
 
-UserSchema.statics.findByToken=function(token){
+UserSchema.statics.findByToken=function(token){  //This is a model method. Model methods are called on .statics
 
 var User=this;
 var decoded;
@@ -72,7 +73,7 @@ try{
    // return new Promise((resolve,reject)=>{
    //    reject();
    // });
-   return Promise.reject(); //This statement and the above code mean the same 
+   return Promise.reject(); //This statement and the above code mean the same
 }
 return User.findOne({
 '_id':decoded._id,
@@ -80,6 +81,33 @@ return User.findOne({
 'tokens.access':'auth'
 });
 };
+
+
+UserSchema.pre('save',function(next){  //This is mongoose middleware which helps you to do something before or after an event
+                                        //Here, we want to hash the password before saving to the database
+var user=this;
+if(user.isModified('password')){  //We need to calculate and store the hash only when password is modified. There can be
+                                  //a case where email is modified but password is untouched but the pre method will be called
+                                  //even in that case. Rather it will be called everytime a post request is sent
+                                  //To avoid that we use if(user.isModified('password')) to check if the password is modified
+                                  //We need to calculate and store the hash only when the password is modified
+
+  bcrypt.genSalt(10,(err,salt)=>{
+    bcrypt.hash(user.password,salt, (err,hash)=>{
+                                               //advantage of bcrypt, it automatically generates the random salt
+          user.password= hash;                    //10 indicates the number of rounds for random generation of salt
+          next();                                    //more the rounds, more secure it is
+
+    });
+  });
+
+}else{
+next();
+}
+
+});
+
+
 
 var User=mongoose.model('Users',UserSchema);
 
