@@ -7,7 +7,7 @@ process.env.PORT=3000;
 process.env.MONGODB_URI='mongodb://localhost:27017/TodoApp';
 }else if(env==='test'){
 process.env.PORT=3000;
-process.env.MONGODB_URI='mongodb://localhost:27017/TodoAppTest'
+process.env.MONGODB_URI='mongodb://127.0.0.1:27017/TodoAppTest'
 }
 
 //Previously, the when the app was run on localhost the some data was added,updated or deleted from
