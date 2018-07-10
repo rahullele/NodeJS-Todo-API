@@ -29,6 +29,7 @@ todo.save().then((doc)=>{
   res.status(400).send(e);
 });
 });
+
 app.get('/todos',(req,res)=>{
 
 Todo.find().then((todos)=>{
@@ -112,6 +113,28 @@ Todo.findByIdAndUpdate(id,{$set:body},{new:true}).then((todo)=>{
   res.status(400).send();
 });
 
+});
+
+app.post('/users',(req,res)=>{
+
+var body=_.pick(req.body,['email','password']);
+var user=new User(body);
+
+//user.generateAuthToken() is an instance method. Token is set on every new user created.
+//User.findByToken is a model method called on the User model
+
+user.save().then(()=>{
+return user.generateAuthToken();
+
+}).then((token)=>{
+
+res.header('x-auth',token).send(user);  //Whenever we prefix a header with 'x-', it means it is a custom field and not
+                                        //necessarily supported by http
+}).catch((e)=>{
+
+  res.status(400).send(e);
+
+});
 });
 
 app.listen(port,()=>{
